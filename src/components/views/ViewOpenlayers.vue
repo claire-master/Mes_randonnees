@@ -51,7 +51,7 @@ import VectorLayer from 'ol/layer/Vector';
 import VectorSource from 'ol/source/Vector';
 import GeoJSON from 'ol/format/GeoJSON';
 
-//import {watchposition} from '../../services/geolocation.js'
+import {watchposition} from '../../services/geolocation.js'
 //import {changeImageMap} from '../../services/changeimage.js'
 
 /**import {} from '../../services/menu.js'*/
@@ -62,8 +62,6 @@ export default {
       center: [7.15, 46.35],
       olmap:null,
       zoom: 15,
-      key: 'AkGbxXx6tDWf1swIhPJyoAVp06H0s0gDTYslNWWHZ6RoPqMpB9ld5FY1WutX8UoF',
-      imagerySet: 'Aerial',
       layersOSM: (
         new TileLayer({
           source: new OSM(),
@@ -73,7 +71,12 @@ export default {
           source: new BingMaps({
             key: 'AkGbxXx6tDWf1swIhPJyoAVp06H0s0gDTYslNWWHZ6RoPqMpB9ld5FY1WutX8UoF',
             imagerySet: 'Aerial'}),
-        })),      
+        })),     
+      geo_options: {
+        enableHignAccuracy: true,
+        maximumAge        : 30000, 
+        timeout           : 27000
+      }, 
     }
 
 
@@ -123,19 +126,20 @@ export default {
       }
     },
 
-/* méthodes pour obtenir la géolocalisation 
-    activategeoloc(){
-      watchposition(this.marker, this.message)
-    }, 
+// méthodes pour obtenir la géolocalisation 
+
 
     marker(position){
-      return 
+      console.log(position.timestamp, position.coords.latitude, position.coords.longitude); 
     },
 
-    message(erreur){
-      return 
+    message(message){
+       alert (message);
     },
-*/
+
+    localisation(callback, errorcallback, geooptions){
+      watchposition(callback, errorcallback, geooptions)
+    }, 
 
 
 
@@ -160,16 +164,15 @@ export default {
     this.olmap = this.setupMap(this.center3857,this.zoom);
     this.olmap.addLayer(this.layersBingMaps);
     this.olmap.addLayer(this.layersOSM);
+    //this.olmap.getvisible(OSM);
+
+    this.localisation(this.marker, this.message, this.geo_options);
+
+    //this.olmap.addLayer(
+    //this.importGeoJSON();
+    //this.content = JSON.parse(importGeoJSON);
 
 
-//    this.olmap.getvisible(OSM);
-        
-
-//    this.olmap.addLayer(
-    this.importGeoJSON();
-//    this.content = JSON.parse(importGeoJSON);
-
-   // 
   }, 
 
 }

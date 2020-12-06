@@ -1,6 +1,6 @@
-export function watchposition(callback, errorcallback){
+export function watchposition(callback, errorcallback, geooptions){
     if ("geolocation" in navigator) {
-        navigator.geolocation.watchPosition(callback);
+        navigator.geolocation.watchPosition(callback,errorcallback, geooptions);
       } else {
         errorcallback('pas de geolocalisation')
         /* la géolocalisation n'est pas disponible */
