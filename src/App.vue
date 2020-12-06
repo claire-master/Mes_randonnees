@@ -1,5 +1,5 @@
 <template>
-  <img id="vue-icon" src="./assets/logo.png"/>
+  <img id="vue-icon" src="./assets/rando.png"/>
   <!-- Bulma: menu tabs -->
   <div class="tabs is-centered">
     <ul>
@@ -19,15 +19,15 @@ export default {
     return {
       menulist:[
         {
-          menuname:"Hello",
+          menuname:"Bienvenue",
           route:"/"
         },
         { 
-          menuname:"Axios",
+          menuname:"Recherche",
           route:"/axios"
         },
         { 
-          menuname:"2d_openlayers",
+          menuname:"Carte",
           route:"/openlayers"
         },
         { 
@@ -35,7 +35,7 @@ export default {
           route:"/leaflet"
         },
         { 
-          menuname:"3d_cesium",
+          menuname:"Vue en 3D",
           route:"/cesium"
         }
       ] 
