@@ -34,7 +34,6 @@
  
   <div id="ol-container" class="map"></div>
 
-
 </template>
 
 <script>
@@ -84,6 +83,12 @@ export default {
       position: null,
     }
 
+    var example1 = new Vue({
+      el: '#example-1',
+      data: {
+        counter: 0
+      }
+    })
 
   },
   computed:{
@@ -134,9 +139,8 @@ export default {
     // méthodes pour obtenir la géolocalisation 
     marker(position){
       console.log(position.coords.accuracy, position.timestamp, position.coords.latitude, position.coords.longitude);
-      var coordinates = [position.coords.latitude, position.coords.longitude];
+      var coordinates = [position.coords.longitude, position.coords.latitude];
       return coordinates
-
     },
 
     message(message){
@@ -147,6 +151,8 @@ export default {
       watchposition(callback, errorcallback, geooptions)
     }, 
 
+
+    //dessin d'un cercle à la position
     posPoint(coordinates, map){
       var positionFeature = new Feature();
       positionFeature.setGeometry(coordinates ?
@@ -156,11 +162,21 @@ export default {
         map: map,
         source: new VectorSource({
           features:[positionFeature]
-        })
+        }),
+        style: new Style({
+          image: new Circle({
+            radius: 6,
+            fill: new Fill({
+              color: '#3399CC'
+            }),
+          })          
+        }),
       });
     },
 
     //import GeoJSON
+
+    //reprendre les données pour trier les randos
     readFeature(features){
       //var myfeature = features.item(0);
       var code = features.get('CAT_CODE');
@@ -175,9 +191,9 @@ export default {
           format: new GeoJSON(),
         })
       })
-      //console.log(new GeoJSON().readFeatures('../../assets/data/donnees_rando_3857_def.geojson'))
-      //console.log(geojson.parse)
-      //this.olmap.addLayer(geojson)
+      console.log(new GeoJSON().readFeatures('../../assets/data/donnees_rando_3857_def.geojson'))
+      console.log(geojson.parse)
+      this.olmap.addLayer(geojson)
       //this.readFeature(geojson)
       //console.log(this.olmap)
     },
@@ -194,9 +210,9 @@ export default {
 
 
     //this.localisation(this.marker, this.message, this.geo_options);
-    this.posPoint(this.localisation(this.marker, this.message, this.geo_options), this.olmap)
+    this.posPoint(this.localisation(this.marker, this.message, this.geo_options), this.olmap);
 
-    //this.olmap.addLayer(
+    //this.olmap.addLayer(geojson)
     this.importGeoJSON();
     //this.content = JSON.parse(importGeoJSON);
 
