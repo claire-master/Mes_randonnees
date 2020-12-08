@@ -10,8 +10,8 @@ export default {
   name: "CesiumGlobeView",
   data() {
     return{
-      center: [6.659361,46.779389],
-      defaultheight:1500.,
+      center: [7.15, 46.35],
+      defaultheight:3000.,
       viewer:null
     }
   },
@@ -39,7 +39,13 @@ export default {
       });
       viewer.scene.primitives.add(Cesium.createOsmBuildings());
       return viewer;
-    }
+    },
+
+    importGeojson () {
+      var dataSource = Cesium.GeoJsonDataSource.load(
+        "../../assets/data/donnees_rando_3857_def.geojson"
+      );
+    },
   },
   mounted() {
     // add cesium ion token to the app
@@ -47,6 +53,9 @@ export default {
     
     this.viewer = this.setupCesiumGlobe();
     this.flytodirection(this.center,this.defaultheight,this.viewer)
+
+    this.importGeojson(this.viewer.dataSources.add(dataSource));
+    //this.viewer.zoomTo(dataSource);
   },
 };
 </script>
@@ -54,5 +63,6 @@ export default {
 <style scoped>
 #cesium-container {
   height: 500px;
+  
 }
 </style>
