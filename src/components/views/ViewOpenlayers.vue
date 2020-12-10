@@ -1,7 +1,8 @@
 <template>
   <div class="top_right">
     <img v-on:click="localisation(this)" src="../../assets/localisation.png" style="width:30px;height:30px;"/>
-    <img v-on:click="changeImageMap(this)" src="../../assets/bingaerial.png" style="width:30px; height:30px;"/>
+    <button v-on:click="changeImageMap('../../assets/bingaerial.png', $event )">
+      </button>
   </div>  
   
   <div class="dropdown is-active">
@@ -59,6 +60,9 @@ import {watchposition} from '../../services/geolocation.js'
 
 /**import {} from '../../services/menu.js'*/
 
+const mygeojson = require('@/assets/data/donnees_rando_3857_def.json')
+
+
 export default {
   data() {
     return{
@@ -83,12 +87,6 @@ export default {
       position: null,
     }
 
-    var example1 = new Vue({
-      el: '#example-1',
-      data: {
-        counter: 0
-      }
-    })
 
   },
   computed:{
@@ -123,7 +121,7 @@ export default {
       })
     },
 
-    changeImageMap(image) {
+    changeImageMap(image, $event) {
       if (image.src.match('../../assets/bingaerial.png')) {
         image.src = "../../assets/osm.png";
         layersBingMaps.setVisible(true);
@@ -186,13 +184,10 @@ export default {
     importGeoJSON (){
       var geojson = new VectorLayer({
         source: new VectorSource({
-          projection : 'EPSG:3857',
-          url: 'donnees_rando_3857_def.geojson',
-          format: new GeoJSON(),
+          features: new GeoJSON().readFeatures(mygeojson)
         })
       })
-      console.log(new GeoJSON().readFeatures('../../assets/data/donnees_rando_3857_def.geojson'))
-      console.log(geojson.parse)
+    
       this.olmap.addLayer(geojson)
       //this.readFeature(geojson)
       //console.log(this.olmap)
