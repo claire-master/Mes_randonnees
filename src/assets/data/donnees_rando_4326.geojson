@@ -1,0 +1,12 @@
+  <div class="field">
+    <div class="control">
+      <div class="select is-primary" v-on:click="changeJSON($event)">
+        <select>
+          <option>Toutes les randonnées</option>
+          <option>Débutant</option>
+          <option>Moyen</option>
+          <option >Expert</option>
+        </select>
+      </div>
+    </div>
+  </div>
