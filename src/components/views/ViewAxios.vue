@@ -1,26 +1,23 @@
 <template>
   <!-- Bulma: menu tabs -->
-  <div id="trump-card" class="card">
+  <div id="card" class="card">
     <div class="card-content">
-    <div id="app">
-      Chercher un lieu <input v-model="name">
-      
-    <router-link to="/Openlayers">  
-      <button @click="recherche_lieu(apiURL)" >Ok</button>
-    </router-link>
-    
-    </div>  
-      <p class="title">
-        “{{trumpquote}}”
-      </p>
-      <p class="subtitle">
-        Dépêche toi de découvrir ta randonnée
-      </p>
+      <div id="app">
+        Chercher un lieu <input v-model="query" />
+
+        <!-- <router-link to="/Openlayers">   -->
+        <button @click="recherche">Ok</button>
+        <!-- </router-link> -->
+      </div>
+      <p class="subtitle">Dépêche toi de découvrir ta randonnée</p>
     </div>
     <footer class="card-footer">
       <p class="card-footer-item">
         <span>
-          C'est parti !!! <a target="_blank" rel="noopener noreferrer" :href="tronalddumpURL">@Tronald Dump</a>
+          C'est parti !!!
+          <a target="_blank" rel="noopener noreferrer" :href="trueetastuce"
+            >Astuces</a
+          >
         </span>
       </p>
     </footer>
@@ -29,40 +26,52 @@
 </template>
 
 <script>
-import axios from 'axios'
+import axios from "axios";
 //import {recherche}from '../../services/recherche.js'
 
 export default {
-  data(){
-    return{
-    //  tronalddumpURL:"https://www.tronalddump.io/",
-      apiURL:'https://api3.geo.admin.ch/rest/services/api/SearchServer?searchText=wabern&type=locations',
-        
-      query:name,
-      type:"&type=locations",
-      trumpquote:""
-    }
+  data() {
+    return {
+       trueetastuce:"https://www.novo-monde.com/randonnee/#rando-journee",
+      //  apiURL:'https://api3.geo.admin.ch/rest/services/api/SearchServer?searchText=wabern&type=locations',
+      url:
+        "https://api3.geo.admin.ch/rest/services/api/SearchServer?searchText=",
+      query: "Diablerets",
+      type: "&type=locations",
+    };
   },
- 
+
   methods: {
     /**
-     * [Get] dumb quote from Donald Trump
-     * 
+     *
      * @param {String} url url of the api
      * @param {String} query query send to the api (word)
      * @returns {Promise<String>} quote from the API || default string if quote not found || default string if error
-     * @catch error from the request 
+     * @catch error from the request
      */
-    async recherche(url,query,type){
-      let response = await axios.get(url+query+type)
-      .then(function (response) {
-        console.log(response);
-      })
-      .catch(error => {
-        console.error(error);
-        return 0
-      })
+    async recherche() {
+      let response = await axios
+        .get(this.url + this.query + this.type)
+
+        .catch((error) => {
+          console.error(error);
+          return null;
+        });
       //request error
+<<<<<<< HEAD
+
+      if (response == null) {
+        alert("Aie ça marche pas");
+      } 
+      else {
+        console.log (response)
+        const resultlat = response.data.results[0].attrs.lat 
+        const resultlong = response.data.results[0].attrs.lon 
+        this.$router.push({
+          name: "Openlayers",
+          params: { lat: resultlat , lon: resultlong},
+        });
+=======
       //recherche
       if(response == 0){
         return "Ouch an error occurred"
@@ -70,16 +79,17 @@ export default {
       // don't find an answer
       if(response.data.count == 0){
         return "Didn't found any answers"
+>>>>>>> origin/main
       }
-      // Get first quote
-      return response.data._embedded.quotes[0].value;
-    }
+
+      return response;
+    },
   },
-}
+};
 </script>
 
 <style scoped>
-#trump-card{
+#card {
   width: 50%;
   margin: auto;
 }
