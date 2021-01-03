@@ -1,40 +1,58 @@
 <template>
   <div class="top_right">
-    <img v-on:click="localisation(this)" src="../../assets/localisation.png" style="width:30px;height:30px;"/>
-    <button v-on:click="changeImageMap('../../assets/bingaerial.png', $event )">
-      </button>
-  </div>  
-  
-  <div class="dropdown is-active">
-    <div class="dropdown-trigger">
-      <button class="button" aria-haspopup="true" aria-controls="dropdown-menu">
-        <span>Mes randonnees</span>
-        <span class="icon is-small">
-          <i class="fas fa-angle-down" aria-hidden="true"></i>
-        </span>
-      </button>
-    </div>
-    <div class="dropdown-menu" id="dropdown-menu" role="menu">
-      <div class="dropdown-content">
-        <a href="#" class="dropdown-item is-active">
-          Débutant
-        </a>
-        <a href="www.google.ch" class="dropdown-item">
-          Moyen
-        </a>
-        <a href="#" class="dropdown-item">
-          Expert
-        </a>
-        <hr class="dropdown-divider">
-        <a href="#" class="dropdown-item">
-          Toutes les randonnees
-        </a>
+    <img
+      v-on:click="watchposition(this.marker, this.message, this.geo_options)"
+      src="../../assets/localisation.png"
+      style="width: 30px; height: 30px"
+    >
+
+    <img
+      v-on:click="changeImageMap($event)"
+      src="../../assets/bingaerial.png"
+      style="width: 30px; height: 30px"
+    >
+  </div>
+
+  <div class="test">
+    <img
+      v-on:click="changeJSON('toutes les randonnees')"
+      src="../../assets/rando.png"
+      style="width: 80px; height: 30px"
+    >
+
+    <img
+      v-on:click="changeJSON('expert')"
+      src="../../assets/expert.png"
+      style="width: 30px; height: 30px"
+    >
+    <img
+      v-on:click="changeJSON('moyen')"
+      src="../../assets/moyen.png"
+      style="width: 30px; height: 30px"
+    >
+
+    <img
+      v-on:click="changeJSON('debutant')"
+      src="../../assets/debutant.png"
+      style="width: 30px; height: 30px"
+    >
+ </div>   
+
+
+  <div class="field">
+    <div class="control">
+      <div class="select is-primary" onChange={this.onSelect}>
+        <select>
+          <option>Toutes les randonnées</option>
+          <option>Débutant</option>
+          <option>Moyen</option>
+          <option value="expert" v-on:click="changeJSON(this.value)">Expert</option>
+        </select>
       </div>
     </div>
-  </div>
- 
-  <div id="ol-container" class="map"></div>
+  </div> 
 
+  <div id="ol-container" class="map"></div>
 </template>
 
 <script>
@@ -64,6 +82,8 @@ const mygeojson = require('@/assets/data/donnees_rando_3857_def.json')
 
 
 export default {
+  
+  props:{lat:Number, lon:Number},
   data() {
     return{
       center: [7.15, 46.35],
@@ -85,9 +105,9 @@ export default {
         timeout           : 27000
       }, 
       position: null,
+
+
     }
-
-
   },
   computed:{
     /**
@@ -98,8 +118,20 @@ export default {
      */
     center3857(){
       return olProj.transform(this.center, 'EPSG:4326', 'EPSG:3857');
-    }
+    },
 
+    layerDebutant(){
+    return this.importGeoJSON(1, 'yellow');
+    },
+    
+
+    layerMoyen(){
+      return this.importGeoJSON(2, 'red');
+    },
+
+    layerExpert(){
+      return this.importGeoJSON(3, 'blue');
+    }
 
   },
   methods: {
@@ -110,54 +142,52 @@ export default {
      * @param {number} mapzoom zommlevel
      * @returns {Map} initmap new openlayers map
      */
+
+
+
     setupMap (mapcenter,mapzoom) {
       return new Map({
         target: 'ol-container',
         view: new View({
           center: mapcenter,
           zoom: mapzoom,
-        //visible: 1,
         })
       })
     },
 
-    changeImageMap(image, $event) {
-      if (image.src.match('../../assets/bingaerial.png')) {
-        image.src = "../../assets/osm.png";
-        layersBingMaps.setVisible(true);
-        layersOSM.setVisible(false);                    
-      }
-      else if (image.src.match("../../assets/osm.png")) {
-        image.src = '../../assets/bingaerial.png';
-        layersOSM.setVisible(true);
-        layersBingMaps.setVisible(false); 
-      }
+    changeImageMap(event) {
+      if (event) {
+        this.layersBingMaps.setVisible(true);
+        this.layersOSM.setVisible(false);                    
+      };
+      
+      // else (event) {
+      //   this.layersOSM.setVisible(true);
+      //   this.layersBingMaps.setVisible(false); 
+      // }
     },
 
     // méthodes pour obtenir la géolocalisation 
     marker(position){
-      console.log(position.coords.accuracy, position.timestamp, position.coords.latitude, position.coords.longitude);
+      //console.log(position.coords.accuracy, position.timestamp, position.coords.latitude, position.coords.longitude);
       var coordinates = [position.coords.longitude, position.coords.latitude];
-      return coordinates
+      //console.log(coordinates)
+      coordinates = olProj.transform(coordinates, 'EPSG:4326', 'EPSG:3857');
+      this.posPoint(coordinates);
+      
     },
 
     message(message){
        alert (message);
     },
 
-    localisation(callback, errorcallback, geooptions){
-      watchposition(callback, errorcallback, geooptions)
-    }, 
-
-
     //dessin d'un cercle à la position
-    posPoint(coordinates, map){
+    posPoint(coordinates){
       var positionFeature = new Feature();
       positionFeature.setGeometry(coordinates ?
         new Point(coordinates): null);
 
-      new VectorLayer({
-        map: map,
+      var layer = new VectorLayer({
         source: new VectorSource({
           features:[positionFeature]
         }),
@@ -170,30 +200,83 @@ export default {
           })          
         }),
       });
+      this.olmap.addLayer(layer)
     },
 
     //import GeoJSON
 
     //reprendre les données pour trier les randos
-    readFeature(features){
+    /*readFeature(features){
       //var myfeature = features.item(0);
       var code = features.get('CAT_CODE');
       console.log(code);
-    },
+    },*/
 
-    importGeoJSON (){
+    importGeoJSON (cat, col){
       var geojson = new VectorLayer({
         source: new VectorSource({
-          features: new GeoJSON().readFeatures(mygeojson)
+          features: new GeoJSON().readFeatures(this.filtreJSON(mygeojson,cat))
+        }),
+        style: new Style({
+          stroke: new Stroke({
+            color: col,
+            width: 2,
+          })
         })
+
       })
-    
-      this.olmap.addLayer(geojson)
-      //this.readFeature(geojson)
-      //console.log(this.olmap)
+      return geojson
+      //this.olmap.addLayer(geojson)
+
+      //lire les infos du geojson
+     // var json = readFeatures(mygeojson);
+     // var obj = JSON.parse(json);
+     // console.log(obj.CAT_CODE);
     },
 
 
+    filtreJSON(geojson, cat){
+      var jsoncopie = JSON.parse(JSON.stringify(geojson))
+      var jsonfiltre = geojson.features.filter(function (entry) {
+        return entry.properties.CAT_CODE === cat;
+      });
+      jsoncopie.features = jsonfiltre;
+      console.log(mygeojson);
+      return jsoncopie;
+    },
+
+    changeJSON(value) {
+      console.log("coucou")
+      if (value == "expert") {
+        this.layerDebutant.setVisible(false);
+        this.layerMoyen.setVisible(false);
+        this.layerExpert.setVisible(true);
+        console.log(value)
+      };
+      if (value == "moyen") {
+        this.layerDebutant.setVisible(false);
+        this.layerMoyen.setVisible(true);
+        this.layerExpert.setVisible(false);
+        console.log(value)
+      };
+      if (value == "debutant") {
+        this.layerDebutant.setVisible(true);
+        this.layerMoyen.setVisible(false);
+        this.layerExpert.setVisible(false);
+        console.log(value)
+      };
+      if (value == "toutes les randonnees") {
+        this.layerDebutant.setVisible(true);
+        this.layerMoyen.setVisible(true);
+        this.layerExpert.setVisible(true);
+        console.log(value)
+      };
+    },
+
+    //zoom sur la carte depuis Axios
+    // this.searchLieu.lieu = response.data.results[0].attrs.label;
+    // this.searchLieu.lat = response.data.results[0].attrs.lat;
+    // this.searchLieu.lon = response.data.results[0].attrs.lon;
 
   },
   
@@ -205,10 +288,11 @@ export default {
 
 
     //this.localisation(this.marker, this.message, this.geo_options);
-    this.posPoint(this.localisation(this.marker, this.message, this.geo_options), this.olmap);
-
-    //this.olmap.addLayer(geojson)
-    this.importGeoJSON();
+    //this.posPoint(watchposition(this.marker, this.message, this.geo_options), this.olmap);
+    // watchposition(this.marker, this.message, this.geo_options);
+    this.olmap.addLayer(this.layerDebutant);
+    this.olmap.addLayer(this.layerMoyen);
+    this.olmap.addLayer(this.layerExpert);
     //this.content = JSON.parse(importGeoJSON);
 
 
@@ -218,14 +302,12 @@ export default {
 </script>
 
 <style scoped>
-
-.top_right{
-  width:30px;
-  height:30px;
+.top_right {
+  width: 30px;
+  height: 20px;
 }
-  
+
 .map {
   height: 500px;
 }
-
 </style>

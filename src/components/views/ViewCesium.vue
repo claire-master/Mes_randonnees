@@ -1,10 +1,20 @@
 <template>
-  <div id="cesium-container"></div>
+  <div id="cesium-container">
+    <div id="toolbar"></div>
+      <div id="zoomButtons"></div>
+        <select class="cesium-button">
+            <option value="undefined">Débutant</option>
+            <option value="undefined">Moyen</option>
+            <option value="undefined">Expert</option>
+        </select>
+  </div>
 </template>
 
 <script>
 import "cesium/Build/Cesium/Widgets/widgets.css";
 import * as Cesium from 'cesium';
+
+const mygeojson = require('@/assets/data/donnees_rando_4326.json')
 
 export default {
   name: "CesiumGlobeView",
@@ -41,11 +51,17 @@ export default {
       return viewer;
     },
 
-    importGeojson () {
-      var dataSource = Cesium.GeoJsonDataSource.load(
-        "../../assets/data/donnees_rando_3857_def.geojson"
-      );
+
+    importjson (){
+      this.viewer.dataSources.add(Cesium.GeoJsonDataSource.load(mygeojson, {
+        stroke: Cesium.Color.RED,
+        fill: Cesium.Color.RED,
+        strokeWidth: 3,
+        markerSymbol: '?',
+        clampToGround: true
+      }));
     },
+
   },
   mounted() {
     // add cesium ion token to the app
@@ -54,7 +70,7 @@ export default {
     this.viewer = this.setupCesiumGlobe();
     this.flytodirection(this.center,this.defaultheight,this.viewer)
 
-    this.importGeojson(this.viewer.dataSources.add(dataSource));
+    this. viewer = this.importjson();
     //this.viewer.zoomTo(dataSource);
   },
 };

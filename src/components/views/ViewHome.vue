@@ -11,7 +11,7 @@
 export default {
   data(){
     return{
-      hellomessage:"Découvrer les randonnées de Suisse"
+      hellomessage:"Découvrez les randonnées de Suisse"
     }
   }
 }
