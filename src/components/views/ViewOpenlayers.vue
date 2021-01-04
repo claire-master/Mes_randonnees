@@ -1,7 +1,7 @@
 <template>
   <div class="top_right">
     <img
-      v-on:click="watchposition(this.marker, this.message, this.geo_options)"
+      v-on:click="watchposition(marker(), message(), geo_options)"
       src="../../assets/localisation.png"
       style="width: 30px; height: 30px"
     >
@@ -46,7 +46,7 @@
           <option>Toutes les randonnées</option>
           <option>Débutant</option>
           <option>Moyen</option>
-          <option value="expert" v-on:click="changeJSON(this.value)">Expert</option>
+          <option v-on:click="changeJSON('expert')">Expert</option>
         </select>
       </div>
     </div>
@@ -246,30 +246,25 @@ export default {
     },
 
     changeJSON(value) {
-      console.log("coucou")
       if (value == "expert") {
         this.layerDebutant.setVisible(false);
         this.layerMoyen.setVisible(false);
         this.layerExpert.setVisible(true);
-        console.log(value)
       };
       if (value == "moyen") {
         this.layerDebutant.setVisible(false);
         this.layerMoyen.setVisible(true);
         this.layerExpert.setVisible(false);
-        console.log(value)
       };
       if (value == "debutant") {
         this.layerDebutant.setVisible(true);
         this.layerMoyen.setVisible(false);
         this.layerExpert.setVisible(false);
-        console.log(value)
       };
       if (value == "toutes les randonnees") {
         this.layerDebutant.setVisible(true);
         this.layerMoyen.setVisible(true);
         this.layerExpert.setVisible(true);
-        console.log(value)
       };
     },
 
@@ -277,6 +272,11 @@ export default {
     // this.searchLieu.lieu = response.data.results[0].attrs.label;
     // this.searchLieu.lat = response.data.results[0].attrs.lat;
     // this.searchLieu.lon = response.data.results[0].attrs.lon;
+    setcenter(lon, lat){
+      if(lat != null){
+        this.olmap.getView().setCenter(olProj.transform([lon, lat], 'EPSG:4326', 'EPSG:3857'));
+      }
+    }
 
   },
   
@@ -295,7 +295,7 @@ export default {
     this.olmap.addLayer(this.layerExpert);
     //this.content = JSON.parse(importGeoJSON);
 
-
+    this.setcenter(this.lon, this.lat);
   }, 
 
 }

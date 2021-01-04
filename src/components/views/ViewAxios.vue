@@ -32,7 +32,7 @@ import axios from "axios";
 export default {
   data() {
     return {
-       trueetastuce:"https://www.novo-monde.com/randonnee/#rando-journee",
+      // trueetastuce:"https://www.novo-monde.com/randonnee/#rando-journee",
       //  apiURL:'https://api3.geo.admin.ch/rest/services/api/SearchServer?searchText=wabern&type=locations',
       url:
         "https://api3.geo.admin.ch/rest/services/api/SearchServer?searchText=",
@@ -58,7 +58,6 @@ export default {
           return null;
         });
       //request error
-<<<<<<< HEAD
 
       if (response == null) {
         alert("Aie ça marche pas");
@@ -71,15 +70,6 @@ export default {
           name: "Openlayers",
           params: { lat: resultlat , lon: resultlong},
         });
-=======
-      //recherche
-      if(response == 0){
-        return "Ouch an error occurred"
-      }
-      // don't find an answer
-      if(response.data.count == 0){
-        return "Didn't found any answers"
->>>>>>> origin/main
       }
 
       return response;
