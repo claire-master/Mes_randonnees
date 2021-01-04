@@ -13,6 +13,7 @@
 <script>
 import "cesium/Build/Cesium/Widgets/widgets.css";
 import * as Cesium from 'cesium';
+import {watchposition} from '../../services/geolocation.js';
 
 const mygeojson = require('@/assets/data/donnees_rando_4326.json')
 
@@ -22,7 +23,13 @@ export default {
     return{
       center: [7.15, 46.35],
       defaultheight:3000.,
-      viewer:null
+      viewer:null,
+
+      geo_options: {
+          enableHignAccuracy: true,
+          maximumAge        : 30000, 
+          timeout           : 27000
+      } 
     }
   },
   methods: {
@@ -62,6 +69,40 @@ export default {
       }));
     },
 
+    marker(position){
+      // console.log(position.coords.accuracy, position.timestamp, position.coords.latitude, position.coords.longitude);
+      // var coordinates = [position.coords.longitude, position.coords.latitude];
+      console.log(position.coords.longitude, position.coords.latitude)
+      // coordinates = olProj.transform(coordinates, 'EPSG:4326', 'EPSG:3857');
+      this.posPoint(position.coords.longitude, position.coords.latitude);
+    },
+
+    message(message){
+       alert (message);
+    },
+
+    posPoint(lon, lat){
+      this.viewer.entities.add({
+        position : Cesium.Cartesian3.fromDegrees(lon, lat),
+        Point : {
+          pixelSize : 5,
+          color : Cesium.Color.RED,
+          outlineColor : Cesium.Color.WHITE,
+          outlineWidth : 2
+        },
+        // label : {
+        //   text : 'Vous êtes ici',
+        //   font : '14pt monospace',
+        //   style: Cesium.LabelStyle.FILL_AND_OUTLINE,
+        //   outlineWidth : 2,
+        //   verticalOrigin : Cesium.VerticalOrigin.BOTTOM,
+        //   pixelOffset : new Cesium.Cartesian2(0, -9)
+        // }
+      });
+      console.log('coucou')
+    }
+
+
   },
   mounted() {
     // add cesium ion token to the app
@@ -70,8 +111,11 @@ export default {
     this.viewer = this.setupCesiumGlobe();
     this.flytodirection(this.center,this.defaultheight,this.viewer)
 
-    this. viewer = this.importjson();
+    this.viewer = this.importjson();
     //this.viewer.zoomTo(dataSource);
+
+    watchposition(this.marker, this.message, this.geo_options);
+    this.viewer = this.posPoint(7.15, 46.35);
   },
 };
 </script>
