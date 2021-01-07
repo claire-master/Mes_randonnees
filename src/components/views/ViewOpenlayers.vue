@@ -256,7 +256,7 @@ export default {
     this.olmap.addLayer(this.layerMoyen);
     this.olmap.addLayer(this.layerExpert);
     this.setcenter(this.lon, this.lat);
-    //watchposition(this.marker, this.message, this.geo_options);
+    watchposition(this.marker, this.message, this.geo_options);
 
   }, 
 
@@ -271,6 +271,6 @@ export default {
 }
 
 .map {
-  height: 500px;
+  height: 800px;
 }
 </style>
