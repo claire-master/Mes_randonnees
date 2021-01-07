@@ -58,11 +58,6 @@ Pour l'introduction des données GeoJson, soit dans la carte 2D ou la carte 3D, 
 Pour la prise en main de Git, nous avons eu des difficultés de compréhension de cette plateforme. N'ayant pas l'habitude de travail avec celle-ci, nous avions peur d'écraser des fichiers plus à jour. Nous avons utilisé la solution de Dropbox comme backup et échange de nos données. La sauvegarde sur Git a été réalisée par une seule personne afin d'éviter les problèmes de versions (branching). De plus, nous avons eu des difficultés de reprise de "Master" via l'invite de commande lorsqu'une sauvegarde est effectuée par l'autre personne. Afin de contourner ce problème, nous ajoutons les fichiers via le site internet et la fonctionnaltié "upload File".
 ___
 
-## Conclusion
-Notre projet permet à l'utilisateur de se préparer avant de partir en randonnées grâce aux niveaux des difficultés présentées sur la carte 2D ainsi que par l'immersion 3D qui permet une bonne vision des dénivelés. 
-Une fois en randonnée, les personnes peuvent en tout temps observer leur géolocalisation sur la carte 2D. Nous sommes satisfaite de notre projet qui remplit les exigences minimales demandées. De plus, nous avons apprécié ce cours qui nous a permis de découvrir de nouveaux outils pour notre expérience professionelle.
-___
-
 ## Perspectives
 Le résultat du projet est un guichet cartographique 2D et 3D avec des données vectorielles sur les randonnées pédestres dans le secteur des Diablerets. La création du code a été réalisée avec l’aide des professeurs ainsi que les informations trouvées sur Internet. Cependant certaines fonctionnalités n'ont pas pu être implémentées soit par l'apparition d'erreur soit par fautes de temps. Nous vous présentons, ci-dessous les fonctionnalités à implémenter pour améliorer notre projet:
 
@@ -110,7 +105,7 @@ La carte 2D a été élaborée via le langage OpenLayer. Cette carte permet de f
 
     + Image bleue/blanc permet d'afficher les randonnées niveau expert
     
-    ![Moyen](https://www.valrando.ch/images/14594_e26f9b78.jpg)
+    ![expert](https://www.randonner.ch/images/2729_70103099.jpg)
     
     + Image rouge/blanc permet d'afficher les randonnées niveau moyen
     
@@ -126,4 +121,12 @@ La carte 2D a été élaborée via le langage OpenLayer. Cette carte permet de f
 La partie 3D est élaboré grâce au langage Cesium. Cette carte permet de visualiser les randonnées en 3D grâce à un fichier GeoJSON qui est projeté sur le globe 3D. 
 Cette carte permet plonger l'utilisateur dans l'environnement de la randonnée. Le modèle 3D lui permet d'évaluer les dénivellées auquelles il sera confronté lors de sa future promenade.
 Lors de sa randonnée, il peut activer la géolocalisation afin d'identifier sa position sur le modèle numérique de terrain. Cette fonctionnalité permet à l'utilisateur de découvrir des lieux cachés derrières une colline ou une forêt qu'il ne verrait pas à l'oeil nu.
+
+![cesium](https://raw.githubusercontent.com/claire-master/Mes_randonnees/main/src/assets/cesium_capture.jpg)
+
+___
+
+## Conclusion
+Notre projet permet à l'utilisateur de se préparer avant de partir en randonnées grâce aux niveaux des difficultés présentées sur la carte 2D ainsi que par l'immersion 3D qui permet une bonne vision des dénivelés. 
+Une fois en randonnée, les personnes peuvent en tout temps observer leur géolocalisation sur la carte 2D. Nous sommes satisfaite de notre projet qui remplit les exigences minimales demandées. De plus, nous avons apprécié ce cours qui nous a permis de découvrir de nouveaux outils pour notre expérience professionelle.
 ___
