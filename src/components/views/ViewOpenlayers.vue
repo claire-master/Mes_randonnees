@@ -1,5 +1,5 @@
 <template>
-  <div class="top_right">
+  <div class="top">
     <img
       v-on:click="watchposition(marker(), message(), geo_options)"
       src="../../assets/localisation.png"
@@ -13,6 +13,7 @@
     >
   </div>
 
+  <!-- boutons pour la selection des randonnees selon niveau -->
   <div class="test">
     <img
       v-on:click="changeJSON('toutes les randonnees')"
@@ -36,16 +37,16 @@
       src="../../assets/debutant.png"
       style="width: 30px; height: 30px"
     >
- </div>   
+  </div>   
 
-
+  <!-- menu deroulant pour le choix des niveaux (seulement sur Fierfox) -->
   <div class="field">
     <div class="control">
       <div class="select is-primary" onChange={this.onSelect}>
         <select>
-          <option>Toutes les randonnées</option>
-          <option>Débutant</option>
-          <option>Moyen</option>
+          <option v-on:click="changeJSON('toutes les randonnees')">Toutes les randonnées</option>
+          <option v-on:click="changeJSON('debutant')">Débutant</option>
+          <option v-on:click="changeJSON('moyen')">Moyen</option>
           <option v-on:click="changeJSON('expert')">Expert</option>
         </select>
       </div>
@@ -71,15 +72,9 @@ import GeoJSON from 'ol/format/GeoJSON';
 import {Fill, Stroke, Circle, Style} from 'ol/style';
 import Point from 'ol/geom/Point';
 import Feature from 'ol/Feature';
-
-
 import {watchposition} from '../../services/geolocation.js'
-//import {changeImageMap} from '../../services/changeimage.js'
-
-/**import {} from '../../services/menu.js'*/
 
 const mygeojson = require('@/assets/data/donnees_rando_3857_def.json')
-
 
 export default {
   
@@ -105,8 +100,6 @@ export default {
         timeout           : 27000
       }, 
       position: null,
-
-
     }
   },
   computed:{
@@ -120,10 +113,10 @@ export default {
       return olProj.transform(this.center, 'EPSG:4326', 'EPSG:3857');
     },
 
+    // creation d'une couche par niveau
     layerDebutant(){
     return this.importGeoJSON(1, 'yellow');
     },
-    
 
     layerMoyen(){
       return this.importGeoJSON(2, 'red');
@@ -143,8 +136,6 @@ export default {
      * @returns {Map} initmap new openlayers map
      */
 
-
-
     setupMap (mapcenter,mapzoom) {
       return new Map({
         target: 'ol-container',
@@ -155,26 +146,19 @@ export default {
       })
     },
 
+    //permet d'afficher l'orthophoto
     changeImageMap(event) {
-      if (event) {
-        this.layersBingMaps.setVisible(true);
-        this.layersOSM.setVisible(false);                    
-      };
-      
-      // else (event) {
-      //   this.layersOSM.setVisible(true);
-      //   this.layersBingMaps.setVisible(false); 
-      // }
+      this.layersBingMaps.setVisible(true);
+      this.layersOSM.setVisible(false);                    
     },
 
     // méthodes pour obtenir la géolocalisation 
+
     marker(position){
-      //console.log(position.coords.accuracy, position.timestamp, position.coords.latitude, position.coords.longitude);
       var coordinates = [position.coords.longitude, position.coords.latitude];
-      //console.log(coordinates)
+      console.log(coordinates)
       coordinates = olProj.transform(coordinates, 'EPSG:4326', 'EPSG:3857');
       this.posPoint(coordinates);
-      
     },
 
     message(message){
@@ -203,15 +187,7 @@ export default {
       this.olmap.addLayer(layer)
     },
 
-    //import GeoJSON
-
-    //reprendre les données pour trier les randos
-    /*readFeature(features){
-      //var myfeature = features.item(0);
-      var code = features.get('CAT_CODE');
-      console.log(code);
-    },*/
-
+    //import donnees par fichier GeoJSON
     importGeoJSON (cat, col){
       var geojson = new VectorLayer({
         source: new VectorSource({
@@ -223,18 +199,11 @@ export default {
             width: 2,
           })
         })
-
       })
       return geojson
-      //this.olmap.addLayer(geojson)
-
-      //lire les infos du geojson
-     // var json = readFeatures(mygeojson);
-     // var obj = JSON.parse(json);
-     // console.log(obj.CAT_CODE);
     },
 
-
+    //parse du fichier afin d'effectuer le filtrage
     filtreJSON(geojson, cat){
       var jsoncopie = JSON.parse(JSON.stringify(geojson))
       var jsonfiltre = geojson.features.filter(function (entry) {
@@ -245,6 +214,7 @@ export default {
       return jsoncopie;
     },
 
+    // fonction pour afficher les randonnees selon le niveau de difficulte
     changeJSON(value) {
       if (value == "expert") {
         this.layerDebutant.setVisible(false);
@@ -268,10 +238,7 @@ export default {
       };
     },
 
-    //zoom sur la carte depuis Axios
-    // this.searchLieu.lieu = response.data.results[0].attrs.label;
-    // this.searchLieu.lat = response.data.results[0].attrs.lat;
-    // this.searchLieu.lon = response.data.results[0].attrs.lon;
+    // reprise des coordonnees de la recherche Axios et les appliquer au centrage de la carte
     setcenter(lon, lat){
       if(lat != null){
         this.olmap.getView().setCenter(olProj.transform([lon, lat], 'EPSG:4326', 'EPSG:3857'));
@@ -280,29 +247,25 @@ export default {
 
   },
   
+  // affichage des calques et des fonctions
   mounted() {
     this.olmap = this.setupMap(this.center3857,this.zoom);
     this.olmap.addLayer(this.layersBingMaps);
     this.olmap.addLayer(this.layersOSM);
-    //this.olmap.getvisible(OSM);
-
-
-    //this.localisation(this.marker, this.message, this.geo_options);
-    //this.posPoint(watchposition(this.marker, this.message, this.geo_options), this.olmap);
-    // watchposition(this.marker, this.message, this.geo_options);
     this.olmap.addLayer(this.layerDebutant);
     this.olmap.addLayer(this.layerMoyen);
     this.olmap.addLayer(this.layerExpert);
-    //this.content = JSON.parse(importGeoJSON);
-
     this.setcenter(this.lon, this.lat);
+    //watchposition(this.marker, this.message, this.geo_options);
+
   }, 
 
 }
 </script>
 
 <style scoped>
-.top_right {
+/* mise en page des classes */
+.top {
   width: 30px;
   height: 20px;
 }

@@ -1,13 +1,5 @@
 <template>
-  <div id="cesium-container">
-    <div id="toolbar"></div>
-      <div id="zoomButtons"></div>
-        <select class="cesium-button">
-            <option value="undefined">Débutant</option>
-            <option value="undefined">Moyen</option>
-            <option value="undefined">Expert</option>
-        </select>
-  </div>
+  <div id="cesium-container"></div>
 </template>
 
 <script>
@@ -58,7 +50,7 @@ export default {
       return viewer;
     },
 
-
+    // import et affichage des randonnees via le fichier geojson
     importjson (){
       this.viewer.dataSources.add(Cesium.GeoJsonDataSource.load(mygeojson, {
         stroke: Cesium.Color.RED,
@@ -69,39 +61,27 @@ export default {
       }));
     },
 
+    // fonctions pour la geolocalisation
     marker(position){
-      // console.log(position.coords.accuracy, position.timestamp, position.coords.latitude, position.coords.longitude);
-      // var coordinates = [position.coords.longitude, position.coords.latitude];
-      console.log(position.coords.longitude, position.coords.latitude)
-      // coordinates = olProj.transform(coordinates, 'EPSG:4326', 'EPSG:3857');
-      this.posPoint(position.coords.longitude, position.coords.latitude);
+      console.log(position.coords.longitude, position.coords.latitude);
+      this.posPoint(position.coords.longitude,position.coords.latitude);
     },
 
     message(message){
        alert (message);
     },
 
+    // affichage d'un point au lieu de la localisation
     posPoint(lon, lat){
       this.viewer.entities.add({
-        position : Cesium.Cartesian3.fromDegrees(lon, lat),
-        Point : {
-          pixelSize : 5,
-          color : Cesium.Color.RED,
-          outlineColor : Cesium.Color.WHITE,
-          outlineWidth : 2
+        position: Cesium.Cartesian3.fromDegrees(lon, lat),
+        point:{
+          pixelSize: 12,
+          color: Cesium.Color.RED,
+          heightReference: Cesium.HeightReference.CLAMP_TO_GROUND,
         },
-        // label : {
-        //   text : 'Vous êtes ici',
-        //   font : '14pt monospace',
-        //   style: Cesium.LabelStyle.FILL_AND_OUTLINE,
-        //   outlineWidth : 2,
-        //   verticalOrigin : Cesium.VerticalOrigin.BOTTOM,
-        //   pixelOffset : new Cesium.Cartesian2(0, -9)
-        // }
       });
-      console.log('coucou')
     }
-
 
   },
   mounted() {
@@ -109,20 +89,18 @@ export default {
     Cesium.Ion.defaultAccessToken = process.env.VUE_APP_CESIUM_ION_TOKEN;
     
     this.viewer = this.setupCesiumGlobe();
-    this.flytodirection(this.center,this.defaultheight,this.viewer)
+    this.flytodirection(this.center,this.defaultheight,this.viewer);
 
-    this.viewer = this.importjson();
-    //this.viewer.zoomTo(dataSource);
+    this.importjson();
 
     watchposition(this.marker, this.message, this.geo_options);
-    this.viewer = this.posPoint(7.15, 46.35);
   },
 };
 </script>
 
 <style scoped>
 #cesium-container {
-  height: 500px;
+  height: 800px;
   
 }
 </style>

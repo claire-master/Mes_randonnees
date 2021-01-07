@@ -1,5 +1,6 @@
 <template>
-  <!-- Bulma: menu tabs -->
+
+  <!-- mise en page et texte d'accueil -->
   <div id="card" class="card">
     <div class="card-content">
       <div id="app">
@@ -15,25 +16,23 @@
       <p class="card-footer-item">
         <span>
           C'est parti !!!
-          <a target="_blank" rel="noopener noreferrer" :href="trueetastuce"
+          <a target="_blank" rel="noopener noreferrer" :href="trucetastuce"
             >Astuces</a
           >
         </span>
       </p>
     </footer>
   </div>
-  <!-- end Bulma: menu tabs -->
 </template>
 
 <script>
 import axios from "axios";
-//import {recherche}from '../../services/recherche.js'
 
 export default {
   data() {
     return {
-      // trueetastuce:"https://www.novo-monde.com/randonnee/#rando-journee",
-      //  apiURL:'https://api3.geo.admin.ch/rest/services/api/SearchServer?searchText=wabern&type=locations',
+      // liens pour recherche Axios et autres
+      trucetastuce:"https://www.novo-monde.com/randonnee/#rando-journee",
       url:
         "https://api3.geo.admin.ch/rest/services/api/SearchServer?searchText=",
       query: "Diablerets",
@@ -64,6 +63,7 @@ export default {
       } 
       else {
         console.log (response)
+        // extraire les localisations du premier lieu ressorti de la recherche
         const resultlat = response.data.results[0].attrs.lat 
         const resultlong = response.data.results[0].attrs.lon 
         this.$router.push({
